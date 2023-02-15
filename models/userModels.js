@@ -27,19 +27,17 @@ const userSchema = new mongoose.Schema({
     select:false
   },
 
-  photo: {
-    type: String,
-  },
+ 
   role:{
 
     type:String,
     enum:{
-      values:['admin','guide','lead-guide','user'],
-     message:"Can't select other than (admin,guide,lead-guide,user)."
+      values:['admin','user'],
+     message:"Can't select other than Admin and user."
     },
     default:'user'
   },
-
+  
   passwordConfirm: {
     type: String,
     required: [true, "Please Confrim a password"],
@@ -68,7 +66,7 @@ const userSchema = new mongoose.Schema({
     
   }
 
-});
+},{ timestamps: true,});
 
 
 

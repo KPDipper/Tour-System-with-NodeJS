@@ -93,15 +93,16 @@ exports.login = catchAsync(async (req, res, next) => {
   //2.check if the user exist &&  password is correct
 
   const user = await User.findOne({ email }).select("+password");
-  if (user.isVerified === false) {
-    return next(new AppError("User is not verified", 401));
-  }
-
+ 
   //we have to awaitbcrypt here since if user is not found then error will show us null as user doesnt exist in first place
   //so if we perform this code then user will be not found and give us error before running second code.
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));
   }
+  if (user.isVerified === false) {
+    return next(new AppError("User is not verified", 401));
+  }
+
 
   //3.if everything is ok send the token
   const token = signToken(user._id);
@@ -173,7 +174,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 //Authorizations:
 exports.restrictTo = (...roles) => {
-  //here ...roles=['admin','lead-guide] so if current user role is otherwise than these then it will give unatuhorized error.
+  //here ...roles=['admin',] so if current user role is otherwise than these then it will give unatuhorized error.
   return (req, res, next) => {
     //here return function will get access to roles paramter up there since it is a closure
     if (!roles.includes(req.user.role)) {
